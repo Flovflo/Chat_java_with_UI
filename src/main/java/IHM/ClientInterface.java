@@ -24,8 +24,8 @@ public class ClientInterface extends JFrame {
     private BufferedReader in;
     private Socket socket;
 
-    private String serverIP = "192.168.152.148";
-    private int serverPort = 6666;
+    private String serverIP = "192.168.152.250";
+    private int serverPort = 5555;
     public ClientInterface() {
         setTitle("Chat Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -99,7 +99,7 @@ public class ClientInterface extends JFrame {
 
         String username = usernameTextField.getText().trim();
         if (!username.isEmpty()) {
-            String date = new SimpleDateFormat("HH:mm").format(new Date());
+            String date = new SimpleDateFormat("HH-mm").format(new Date());
             out.println(username + " has disconnected at " + date);
         }
 
@@ -127,9 +127,9 @@ public class ClientInterface extends JFrame {
             }
 
             String date = new SimpleDateFormat("HH:mm").format(new Date()); // Changer le format de l'heure
-            String formattedMessage = date + " " + username + ": " + message;
+            String formattedMessage = username + ":" + date + ":" + message; // Le format "username:date:message" est ici sans le préfixe "06:"
             out.println(formattedMessage);
-            appendMessage(formattedMessage); // Afficher le message du client dans la JTextArea après l'envoi
+            // appendMessage(formattedMessage);
             messageTextField.setText("");
         }
     }
