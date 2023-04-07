@@ -27,7 +27,7 @@ public class ChatServer {
                 pool.execute(clientHandler);
             }
         } catch (IOException e) {
-            System.out.println("Erreur du serveur de chat : " + e.getMessage());
+            System.out.println(" Erreur du serveur de chat : " + e.getMessage());
         }
     }
 

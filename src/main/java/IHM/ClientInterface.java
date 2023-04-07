@@ -113,9 +113,9 @@ public class ClientInterface extends JFrame {
             out = null;
             in = null;
             usernameTextField.setText("");
-            JOptionPane.showMessageDialog(this, "Déconnecté du serveur de chat.");
+            JOptionPane.showMessageDialog(this, " Déconnecté du serveur de chat.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Erreur de déconnexion du serveur de chat : " + e.getMessage());
+            JOptionPane.showMessageDialog(this, " Erreur de déconnexion du serveur de chat : " + e.getMessage());
         }
     }
 
@@ -155,7 +155,7 @@ public class ClientInterface extends JFrame {
             try {
                 Date parsedDate = new SimpleDateFormat("HH-mm").parse(date);
                 String formattedDate = new SimpleDateFormat("HH:mm").format(parsedDate);
-                chatTextArea.append(sender + " à " + recipient + " (" + formattedDate + "): " + content + "\n");
+                chatTextArea.append(sender + " à  " + recipient + " (" + formattedDate + "): " + content + "\n");
             } catch (java.text.ParseException e) {
                 chatTextArea.append(message + "\n");
             }
