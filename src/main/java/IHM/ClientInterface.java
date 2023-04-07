@@ -24,7 +24,7 @@ public class ClientInterface extends JFrame {
     private BufferedReader in;
     private Socket socket;
 
-    private String serverIP = "127.0.0.1";
+    private String serverIP = "192.168.152.172";
     private int serverPort = 6666;
     public ClientInterface() {
         setTitle("Chat Client");
