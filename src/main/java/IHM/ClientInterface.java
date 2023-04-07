@@ -15,6 +15,8 @@ public class ClientInterface extends JFrame {
     private JPanel mainPanel;
     private JTextField usernameTextField;
     private JButton connectButton;
+    private JTextField recipientTextField;
+    private JLabel recipientLabel;// Ajout d'un champ pour le destinataire
     private JTextArea chatTextArea;
     private JTextField messageTextField;
     private JButton sendButton;
@@ -24,7 +26,7 @@ public class ClientInterface extends JFrame {
     private BufferedReader in;
     private Socket socket;
 
-    private String serverIP = "192.168.152.172";
+    private String serverIP = "127.0.0.1";
     private int serverPort = 6666;
     public ClientInterface() {
         setTitle("Chat Client");
@@ -126,14 +128,14 @@ public class ClientInterface extends JFrame {
                 return;
             }
 
+            // Ajouter le destinataire (remplacez "recipient" par le nom d'utilisateur du destinataire souhaité)
+            String recipient = "recipient";
             String date = new SimpleDateFormat("HH-mm").format(new Date()); // Changer le format de l'heure
-            String formattedMessage = username + ":" + date + ":" + message; // Le format "username:date(HH-mm):message" est ici sans le préfixe "06:"
+            String formattedMessage = username + ":" + recipient + ":" + date + ":" + message;
             out.println(formattedMessage);
-            // appendMessage(formattedMessage);
             messageTextField.setText("");
         }
     }
-
     public void setOut(PrintWriter out) {
         this.out = out;
     }
@@ -143,16 +145,17 @@ public class ClientInterface extends JFrame {
     }
 
     public void appendMessage(String message) {
-        String[] parts = message.split(":", 3);
-        if (parts.length == 3) {
-            String username = parts[0];
-            String date = parts[1];
-            String content = parts[2];
+        String[] parts = message.split(":", 4);
+        if (parts.length == 4) {
+            String sender = parts[0];
+            String recipient = parts[1];
+            String date = parts[2];
+            String content = parts[3];
 
             try {
                 Date parsedDate = new SimpleDateFormat("HH-mm").parse(date);
                 String formattedDate = new SimpleDateFormat("HH:mm").format(parsedDate);
-                chatTextArea.append(username + " (" + formattedDate + "): " + content + "\n");
+                chatTextArea.append(sender + " à " + recipient + " (" + formattedDate + "): " + content + "\n");
             } catch (java.text.ParseException e) {
                 chatTextArea.append(message + "\n");
             }
@@ -160,7 +163,6 @@ public class ClientInterface extends JFrame {
             chatTextArea.append(message + "\n");
         }
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
