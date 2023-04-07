@@ -24,8 +24,8 @@ public class ClientInterface extends JFrame {
     private BufferedReader in;
     private Socket socket;
 
-    private String serverIP = "127.0.0.1";
-    private int serverPort = 1235;
+    private String serverIP = "192.168.152.148";
+    private int serverPort = 6666;
     public ClientInterface() {
         setTitle("Chat Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,14 +43,14 @@ public class ClientInterface extends JFrame {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage();
+                envoyerMessage();
             }
         });
 
         messageTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage();
+                envoyerMessage();
             }
         });
         disconnectButton.addActionListener(new ActionListener() {
@@ -64,7 +64,7 @@ public class ClientInterface extends JFrame {
     private void connectToServer() {
 
         if (socket != null && socket.isConnected()) {
-            JOptionPane.showMessageDialog(this, "You are already connected to the server.");
+            JOptionPane.showMessageDialog(this, "Vous êtes déjà connecté au serveur.");
             return;
         }
         try {
@@ -72,7 +72,7 @@ public class ClientInterface extends JFrame {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            JOptionPane.showMessageDialog(this, "Connected to the chat server.");
+            JOptionPane.showMessageDialog(this, "Connexion au serveur de chat.");
 
             Thread serverListener = new Thread(() -> {
                 try {
@@ -81,19 +81,19 @@ public class ClientInterface extends JFrame {
                         appendMessage(inputLine);
                     }
                 } catch (IOException e) {
-                    appendMessage("Error receiving messages from server: " + e.getMessage());
+                    appendMessage("Erreur de réception des messages du serveur : " + e.getMessage());
                 }
             });
             serverListener.start();
 
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error connecting to the chat server: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erreur de connexion au serveur de chat : " + e.getMessage());
         }
     }
 
     private void disconnectFromServer() {
         if (socket == null || !socket.isConnected()) {
-            JOptionPane.showMessageDialog(this, "You are not connected to the server.");
+            JOptionPane.showMessageDialog(this, "Vous n'êtes pas connecté au serveur.");
             return;
         }
 
@@ -111,18 +111,18 @@ public class ClientInterface extends JFrame {
             out = null;
             in = null;
             usernameTextField.setText("");
-            JOptionPane.showMessageDialog(this, "Disconnected from the chat server.");
+            JOptionPane.showMessageDialog(this, "Déconnecté du serveur de chat.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error disconnecting from the chat server: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erreur de déconnexion du serveur de chat : " + e.getMessage());
         }
     }
 
-    private void sendMessage() {
+    private void envoyerMessage() {
         String message = messageTextField.getText().trim();
         if (!message.isEmpty()) {
             String username = usernameTextField.getText().trim();
             if (username.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter a username.");
+                JOptionPane.showMessageDialog(this, "Veuillez saisir un nom d'utilisateur.");
                 return;
             }
 

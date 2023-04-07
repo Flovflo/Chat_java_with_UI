@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 
 public class ChatServer {
-    private static final int PORT = 1235;
+    private static final int PORT = 6666;
     private Set<String> usernames = new HashSet<>();
     private Set<ClientHandler> clientHandlers = new HashSet<>();
 
@@ -16,7 +16,7 @@ public class ChatServer {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Chat Server started on port " + PORT);
+            System.out.println("Le serveur de chat a démarré sur le port " + PORT);
 
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -25,7 +25,7 @@ public class ChatServer {
                 new Thread(clientHandler).start();
             }
         } catch (IOException e) {
-            System.out.println("Error starting the Chat Server: " + e.getMessage());
+            System.out.println("Erreur de démarrage du serveur de chat : " + e.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class ChatServer {
         boolean removed = usernames.remove(username);
         if (removed) {
             clientHandlers.remove(client);
-            System.out.println("User " + username + " has left the chat.");
+            System.out.println("User" + username + " has left the chat.");
         }
     }
 

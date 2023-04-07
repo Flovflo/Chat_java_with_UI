@@ -36,17 +36,17 @@ public class ClientHandler implements Runnable {
                             server.broadcast(username + " has joined the chat.", this);
                         } else {
                             username = null;
-                            out.println("ERROR: Username already exists.");
+                            out.println("ERREUR : Le nom d'utilisateur existe déjà.");
                         }
                     }
 
                     server.broadcast(username + ": " + message + " (" + date + ")", this);
                 } else {
-                    out.println("ERROR: Invalid message format.");
+                    out.println("ERREUR : Le format du message n'est pas valide.");
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error in ClientHandler: " + e.getMessage());
+            System.out.println("Erreur dans le ClientHandler : " + e.getMessage());
         } finally {
             if (out != null) {
                 out.close();
@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
             try {
                 socket.close();
             } catch (IOException e) {
-                System.out.println("Error closing socket: " + e.getMessage());
+                System.out.println("Erreur de fermeture du socket : " + e.getMessage());
             }
         }
     }
