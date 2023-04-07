@@ -24,8 +24,8 @@ public class ClientInterface extends JFrame {
     private BufferedReader in;
     private Socket socket;
 
-    private String serverIP = "192.168.152.250";
-    private int serverPort = 5555;
+    private String serverIP = "127.0.0.1";
+    private int serverPort = 6666;
     public ClientInterface() {
         setTitle("Chat Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,8 +126,8 @@ public class ClientInterface extends JFrame {
                 return;
             }
 
-            String date = new SimpleDateFormat("HH:mm").format(new Date()); // Changer le format de l'heure
-            String formattedMessage = username + ":" + date + ":" + message; // Le format "username:date:message" est ici sans le préfixe "06:"
+            String date = new SimpleDateFormat("HH-mm").format(new Date()); // Changer le format de l'heure
+            String formattedMessage = username + ":" + date + ":" + message; // Le format "username:date(HH-mm):message" est ici sans le préfixe "06:"
             out.println(formattedMessage);
             // appendMessage(formattedMessage);
             messageTextField.setText("");
@@ -143,7 +143,22 @@ public class ClientInterface extends JFrame {
     }
 
     public void appendMessage(String message) {
-        chatTextArea.append(message + "\n");
+        String[] parts = message.split(":", 3);
+        if (parts.length == 3) {
+            String username = parts[0];
+            String date = parts[1];
+            String content = parts[2];
+
+            try {
+                Date parsedDate = new SimpleDateFormat("HH-mm").parse(date);
+                String formattedDate = new SimpleDateFormat("HH:mm").format(parsedDate);
+                chatTextArea.append(username + " (" + formattedDate + "): " + content + "\n");
+            } catch (java.text.ParseException e) {
+                chatTextArea.append(message + "\n");
+            }
+        } else {
+            chatTextArea.append(message + "\n");
+        }
     }
 
     public static void main(String[] args) {

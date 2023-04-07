@@ -1,52 +1,78 @@
 package sansIHM;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ChatServer {
-    private static final int PORT = 6666;
-    private Set<String> usernames = new HashSet<>();
-    private Set<ClientHandler> clientHandlers = new HashSet<>();
+    private int serverPort = 6666;
+    private List<ClientHandler> clients = new ArrayList<>();
+    private ExecutorService pool = Executors.newFixedThreadPool(10);
 
-    public static void main(String[] args) {
-        ChatServer server = new ChatServer();
-        server.start();
-    }
-
-    public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Le serveur de chat a démarré sur le port " + PORT);
+    public ChatServer() {
+        try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
+            System.out.println("Le serveur de chat est démarré et en attente de clients...");
 
             while (true) {
-                Socket socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(socket, this);
-                clientHandlers.add(clientHandler);
-                new Thread(clientHandler).start();
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                clients.add(clientHandler);
+                pool.execute(clientHandler);
             }
         } catch (IOException e) {
-            System.out.println("Erreur de démarrage du serveur de chat : " + e.getMessage());
+            System.out.println("Erreur du serveur de chat : " + e.getMessage());
         }
     }
 
-    void broadcast(String message, ClientHandler excludeClient) {
-        for (ClientHandler client : clientHandlers) {
-            if (client != excludeClient) {
-                client.sendMessage(message);
+    public static void main(String[] args) {
+        new ChatServer();
+    }
+
+    private class ClientHandler implements Runnable {
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    broadcastMessage(inputLine);
+                }
+            } catch (IOException e) {
+                System.out.println("Erreur du gestionnaire de client : " + e.getMessage());
+            } finally {
+                try {
+                    if (in != null) in.close();
+                    if (out != null) out.close();
+                    if (socket != null) socket.close();
+
+                    clients.remove(this);
+                } catch (IOException e) {
+                    System.out.println("Erreur lors de la fermeture des ressources : " + e.getMessage());
+                }
+            }
+        }
+
+        private void broadcastMessage(String message) {
+            for (ClientHandler client : clients) {
+                client.out.println(message);
             }
         }
     }
-
-    void removeClient(String username, ClientHandler client) {
-        boolean removed = usernames.remove(username);
-        if (removed) {
-            clientHandlers.remove(client);
-            System.out.println("User" + username + " has left the chat.");
-        }
-    }
-
-    boolean addUsername(String username) {
-        return usernames.add(username);
-    }
 }
-
